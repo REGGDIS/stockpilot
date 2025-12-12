@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:16
+    container_name: stockpilot-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: stockpilot
+      POSTGRES_PASSWORD: devpass
+      POSTGRES_DB: stockpilot
+    ports:
+      - "5432:5432"
+    volumes:
+      - stockpilot_data:/var/lib/postgresql/data
+
+volumes:
+  stockpilot_data:
