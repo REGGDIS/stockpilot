@@ -26,6 +26,13 @@ export default function Layout() {
                             Products
                         </NavLink>
 
+                        <NavLink
+                            to="/locations"
+                            className={({ isActive }) => `${linkBase} ${isActive ? linkActive : ""}`}
+                        >
+                            Locations
+                        </NavLink>
+
                         <div className="text-xs text-zinc-400 px-3">
                             Próximamente: Locations, Movements, Stock
                         </div>

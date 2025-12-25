@@ -28,6 +28,46 @@ app.get("/products", async (req, res) => {
     }
 });
 
+// GET /locations
+app.get("/locations", async (req, res) => {
+    try {
+        const { rows } = await db.query(
+            "SELECT id, code, name, description, is_active, created_at, updated_at FROM locations ORDER BY id ASC"
+        );
+        res.json(rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Error obteniendo locations" });
+    }
+});
+
+// POST /locations
+app.post("/locations", async (req, res) => {
+    try {
+        const { code, name, description } = req.body;
+
+        if (!code || !name) {
+            return res.status(400).json({ error: "code y name son obligatorios" });
+        }
+
+        const { rows } = await db.query(
+            `INSERT INTO locations (code, name, description)
+       VALUES ($1, $2, $3)
+       RETURNING id, code, name, description, is_active, created_at, updated_at`,
+            [code, name, description ?? null]
+        );
+
+        res.status(201).json(rows[0]);
+    } catch (err) {
+        // típico: code duplicado (constraint unique)
+        if (err && err.code === "23505") {
+            return res.status(409).json({ error: "Location code ya existe" });
+        }
+        console.error(err);
+        res.status(500).json({ error: "Error creando location" });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`StockPilot API escuchando en http://localhost:${PORT}`);
 });
